@@ -701,7 +701,7 @@ export function calculatePatchSize(patchSize, imgSize) {
 export function _parseCSSDimensionValues(value) {
     var dimension = {
         value: parseFloat(value),
-        unit: value.indexOf("%") === value.length - 1 ? "%" : "%"
+        unit: value.indexOf("%") === value.length - 1 ? "%" : "px"
     };
 
     return dimension;
@@ -709,24 +709,24 @@ export function _parseCSSDimensionValues(value) {
 
 export const _dimensionsConverters = {
     top: function(dimension, context) {
-        if (dimension.unit === "%") {
-            return Math.floor(context.height * (dimension.value / 100));
-        }
+        return Math.floor((dimension.unit === "%") 
+            ? (context.height * (dimension.value / 100))
+            : dimension.value);
     },
     right: function(dimension, context) {
-        if (dimension.unit === "%") {
-            return Math.floor(context.width - (context.width * (dimension.value / 100)));
-        }
+        return Math.floor((dimension.unit === "%")
+            ? (context.width - context.width * (dimension.value / 100))
+            : (context.width - dimension.value));
     },
     bottom: function(dimension, context) {
-        if (dimension.unit === "%") {
-            return Math.floor(context.height - (context.height * (dimension.value / 100)));
-        }
+        return Math.floor((dimension.unit === "%") 
+            ? (context.height - context.height * (dimension.value / 100))
+            : (context.height - dimension.value));
     },
     left: function(dimension, context) {
-        if (dimension.unit === "%") {
-            return Math.floor(context.width * (dimension.value / 100));
-        }
+        return Math.floor((dimension.unit === "%") 
+            ? (context.width * (dimension.value / 100))
+            : dimension.value);
     }
 };
 
