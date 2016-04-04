@@ -72,7 +72,11 @@ function applyCameraFacing(facing, constraints) {
         return new Promise((resolve, reject) => {
             MediaStreamTrack.getSources((sourceInfos) => {
                 const videoSource = sourceInfos.filter((sourceInfo) => (
-                    sourceInfo.kind === "video" && sourceInfo.facing === facing
+                    (sourceInfo.kind === "video" || sourceInfo.kind === "videoinput") && 
+                    (sourceInfo.facing === facing || 
+                        (facing === "user" && sourceInfo.label.toLowerCase().indexOf("front") > -1) ||
+                        (facing === "environment" && sourceInfo.label.toLowerCase().indexOf("rear") > -1)
+                    )
                 ))[0];
                 if (videoSource) {
                     return resolve(merge({}, constraints,
