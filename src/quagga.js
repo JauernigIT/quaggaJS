@@ -237,11 +237,12 @@ function hasCodeResult (result) {
 }
 
 function publishResult(result, imageData) {
-    const resultToPublish = result && (result.barcodes || result);
+    let resultToPublish = result;
 
     if (result && _onUIThread) {
         transformResult(result);
         addResult(result, imageData);
+        resultToPublish = result.barcodes || result;
     }
 
     Events.publish("processed", resultToPublish);
@@ -357,10 +358,19 @@ function initWorker(cb) {
         cmd: 'init',
         size: {x: _inputStream.getWidth(), y: _inputStream.getHeight()},
         imageData: workerThread.imageData,
-        config: _config
+        config: configForWorker(_config)
     }, [workerThread.imageData.buffer]);
 }
 
+function configForWorker(config) {
+    return {
+        ...config,
+        inputStream: {
+            ...config.inputStream,
+            target: null
+        }
+    };
+}
 
 function workerInterface(factory) {
     /* eslint-disable no-undef*/
